@@ -30,10 +30,11 @@ try:
     with open(file_path, "r") as f:
         telemetry = json.load(f)
 except Exception as e:
-    print("ERROR >>> could not load JSON file:", repr(e))
+    # This will help if the file fails to load
     telemetry = []
+    print("ERROR >>> could not load JSON file:", repr(e))
 
-# ✅ POST endpoint with detailed error capture
+# ✅ POST endpoint with full error return
 @app.post("/")
 async def get_latency_metrics(request: Request):
     try:
@@ -67,7 +68,10 @@ async def get_latency_metrics(request: Request):
         return JSONResponse(status_code=200, content={"results": results}, headers=headers)
 
     except Exception as e:
-        # ✅ Print error to logs and return readable JSON message
-        print("ERROR >>>", repr(e))
+        # ✅ Return the exact error message in the response
         headers = {"Access-Control-Allow-Origin": "*"}
-        return JSONResponse(status_code=500, content={"error": str(e)}, headers=headers)
+        return JSONResponse(
+            status_code=500,
+            content={"error": repr(e)},
+            headers=headers
+        )
