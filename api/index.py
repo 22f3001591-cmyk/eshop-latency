@@ -12,8 +12,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-with open("q-vercel-latency.json", "r") as f:
+import os
+file_path = os.path.join(os.path.dirname(__file__), "q-vercel-latency.json")
+with open(file_path, "r") as f:
     telemetry = json.load(f)
+
 
 @app.post("/")
 async def get_latency_metrics(request: Request):
