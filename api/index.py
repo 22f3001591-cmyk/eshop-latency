@@ -1,25 +1,24 @@
-import os
-import json
-import numpy as np
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+import json, os, numpy as np
 
 app = FastAPI()
 
-# Enable CORS
+# ✅ Enable CORS for all origins and methods
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["POST"],
+    allow_credentials=True,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Correct path for bundled JSON file
+# ✅ Use correct JSON path
 file_path = os.path.join(os.path.dirname(__file__), "q-vercel-latency.json")
 
-# Load data once at startup
 with open(file_path, "r") as f:
     telemetry = json.load(f)
+
 
 @app.post("/")
 async def get_latency_metrics(request: Request):
